@@ -16,10 +16,10 @@ To try the demo: https://www.alexandrelavoie.ca/ahc/demo/
 ## Getting Started
 If your objective is to integrate this controller into your projects, I recommend acquiring [Advanced Helicopter Controller](https://assetstore.unity.com/packages/tools/physics/advanced-helicopter-controller-215906) from the Unity Asset Store, where it is freely available.
 
-**Prerequisites**: Ensure you have Unity installed on your system.
-**Installation**: Clone this repository or download the ZIP file and extract it.
-**Setup**: Import the Advanced Helicopter Controller asset into your Unity project.
-**Usage**: Attach the provided scripts to your helicopter GameObject and adjust the parameters as needed.
+- **Prerequisites**: Ensure you have Unity installed on your system.
+- **Installation**: Clone this repository or download the ZIP file and extract it.
+- **Setup**: Import the Advanced Helicopter Controller asset into your Unity project.
+- **Usage**: Attach the provided scripts to your helicopter GameObject and adjust the parameters as needed.
 
 ## Documentation
 For detailed documentation on how to install Advanced Helicopter Controller, see: https://www.alexandrelavoie.ca/ahc.html.
