@@ -25,9 +25,9 @@ namespace alelavoie
 
             MaxLiftConservationAngle = ahc.MaxLiftConservationAngle;
 
-            PitchSensitivity = Mathf.Lerp(0.02f, 0.3f, ahc.PitchSensitivity) * _angularDrag;
-            RollSensitivity = Mathf.Lerp(0.02f, 0.4f, ahc.RollSensitivity) * _angularDrag;
-            YawSensitivity = Mathf.Lerp(0.02f, 0.2f, ahc.YawSensitivity) * _angularDrag;
+            PitchSensitivity = Mathf.Lerp(0.000002f, 0.00003f, ahc.PitchSensitivity) * _angularDrag;
+            RollSensitivity = Mathf.Lerp(0.000002f, 0.00004f, ahc.RollSensitivity) * _angularDrag;
+            YawSensitivity = Mathf.Lerp(0.000002f, 0.00002f, ahc.YawSensitivity) * _angularDrag;
 
             RotorDragCoefficientUnder = Mathf.Lerp(0.002f, 0.005f, ahc.RotorDragCoefficientUnder);
             RotorDragCoefficientAbove = Mathf.Lerp(0.001f, 0.003f, ahc.RotorDragCoefficientAbove);
