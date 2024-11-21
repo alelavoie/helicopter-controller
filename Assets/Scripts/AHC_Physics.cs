@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace alelavoie
 {
@@ -8,7 +8,7 @@ namespace alelavoie
         const float MIN_SPEED_ANGURAL_DRAG = 72f;
         const float ANGULAR_DRAG_COEFICIENT = 0.0005f;
         const float ROTOR_DRAG_MAX_DEVIATION_ANGLE = 15f;
-        const float TIME_TO_FULL_INPUT = 1f;
+        const float TIME_TO_FULL_INPUT = 0.4f;
 
         private AHC _ahc;
 
@@ -116,30 +116,40 @@ namespace alelavoie
 
         private void ApplyPitchTorque()
         {
-            if (_ahc.Controls.Pitch != 0) {
-                _ahc.Controls.PitchLastChanged += Time.deltaTime;
+            if (_ahc.Controls.Pitch == 0)
+            {
+                return;
             }
-            float modulatedPitch = Mathf.InverseLerp(0f, TIME_TO_FULL_INPUT, _ahc.Controls.PitchLastChanged) * _ahc.Controls.Pitch;
+            _ahc.Controls.PitchLastChanged += Time.deltaTime;
+            ApplyModulatedTorque(-_ahc.transform.right, _ahc.Controls.PitchLastChanged, _ahc.Controls.Pitch * _ahc.Settings.PitchSensitivity);
 
-            _ahc.HeliRigidbody.AddTorque(-_ahc.transform.right * modulatedPitch * _ahc.Settings.PitchSensitivity, ForceMode.Acceleration);
         }
         private void ApplyRollTorque()
         {
-            if (_ahc.Controls.Roll != 0)
+            if (_ahc.Controls.Roll == 0)
             {
-                _ahc.Controls.RollLastChanged += Time.deltaTime;
+                return;
             }
-            float modulatedRoll = Mathf.InverseLerp(0f, TIME_TO_FULL_INPUT, _ahc.Controls.RollLastChanged) * _ahc.Controls.Roll;
-            _ahc.HeliRigidbody.AddTorque(-_ahc.transform.forward * modulatedRoll * _ahc.Settings.RollSensitivity, ForceMode.Acceleration);
+            _ahc.Controls.RollLastChanged += Time.deltaTime;
+            ApplyModulatedTorque(-_ahc.transform.forward, _ahc.Controls.RollLastChanged, _ahc.Controls.Roll * _ahc.Settings.RollSensitivity);
         }        
         private void ApplyYawTorque()
         {
-            if (_ahc.Controls.Roll != 0)
+            if (_ahc.Controls.Yaw == 0)
             {
-                _ahc.Controls.RollLastChanged += Time.deltaTime;
+                return;
             }
-            float modulatedRoll = Mathf.InverseLerp(0f, TIME_TO_FULL_INPUT, _ahc.Controls.RollLastChanged) * _ahc.Controls.Roll;
-            _ahc.HeliRigidbody.AddTorque(_ahc.transform.up * _ahc.Controls.Yaw * _ahc.Settings.YawSensitivity, ForceMode.Acceleration);
+            _ahc.Controls.YawLastChanged += Time.deltaTime;
+            ApplyModulatedTorque(_ahc.transform.up, _ahc.Controls.YawLastChanged, _ahc.Controls.Yaw * _ahc.Settings.YawSensitivity);
+        }
+
+        private void ApplyModulatedTorque(Vector3 direction, float timeInputPressed, float maxTorqueStrength)
+        {   
+            // To create a smooth movement when applying Yaw torque, the strength of the Yaw torque linearly increases from 0 to the maximum pitch strength
+            // over TIME_TO_FULL_INPUT.
+            Debug.Log(Mathf.InverseLerp(0f, TIME_TO_FULL_INPUT, timeInputPressed));
+            float modulatedTorque = Mathf.InverseLerp(0f, TIME_TO_FULL_INPUT, timeInputPressed) * maxTorqueStrength;
+            _ahc.HeliRigidbody.AddTorque(direction * modulatedTorque * _ahc.HeliRigidbody.inertiaTensor.magnitude, ForceMode.VelocityChange);
         }
         
         public Vector3 RotorLift()
