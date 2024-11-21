@@ -30,6 +30,8 @@ namespace alelavoie
             }
         }
 
+        // If the angle between the current direction and the normal is smaller than the maxAngle, the direction is adjusted to vary exponentially
+        // from the normal to the maxAngle. This will make the direction change slowly when it is close to the normal, and faster when it is close to the maxAngle.
         public static Vector3 DampenOrientation(Vector3 normal, Vector3 currentDirection, float maxAngle)
         {
             float angle = Vector3.Angle(normal, currentDirection);

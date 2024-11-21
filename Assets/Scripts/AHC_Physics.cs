@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace alelavoie
 {
@@ -122,7 +122,7 @@ namespace alelavoie
             }
             _ahc.Controls.PitchLastChanged += Time.deltaTime;
             ApplyModulatedTorque(-_ahc.transform.right, _ahc.Controls.PitchLastChanged, _ahc.Controls.Pitch * _ahc.Settings.PitchSensitivity);
-
+            
         }
         private void ApplyRollTorque()
         {
@@ -168,39 +168,41 @@ namespace alelavoie
 
         private float GetLiftStrength(Vector3 liftDirection, float collectiveInput)
         {
-            float angle = Vector3.Angle(Vector3.up, liftDirection);
-            if (angle >= 90)
+            float angleBetweenUpAndLift = Vector3.Angle(Vector3.up, liftDirection);
+            if (angleBetweenUpAndLift >= 95)
             {
                 return 0;
             }
 
             float collectiveLift = _baseLiftMagnitude + (_maxLiftVariation * collectiveInput);
 
-            if (angle <= _ahc.Settings.MaxLiftConservationAngle)
+            //If the helicopter is tilted less than the MaxLiftConservationAngle, the magnitude of the lift vector is increased so the
+            // vertical component of the lift vector stays the same. More concretely, this means the helicopter will not lose altitude when tilting.
+            if (angleBetweenUpAndLift <= _ahc.Settings.MaxLiftConservationAngle)
             {
-
-                float adjustedBaseLift = collectiveLift / Mathf.Cos(angle * Mathf.Deg2Rad);
+                float adjustedBaseLift = collectiveLift / Mathf.Cos(angleBetweenUpAndLift * Mathf.Deg2Rad);
                 return adjustedBaseLift;
             }
             else
             {
                 //Lift slowly decreases after tilting past the MaxTiltAngle.
-                float modulation = Mathf.Lerp(0.2f, 1f, 1 - Mathf.InverseLerp(_ahc.Settings.MaxLiftConservationAngle, 90f, angle));
+                float modulation = Mathf.Lerp(0.2f, 1f, 1 - Mathf.InverseLerp(_ahc.Settings.MaxLiftConservationAngle, 90f, angleBetweenUpAndLift));
                 return collectiveLift * modulation;
             }
         }
 
         private Vector3 GetLiftDirection()
         {
-            float angleHeliUpZenithUp = Vector3.Angle(_ahc.transform.up, Vector3.up);
-            if (angleHeliUpZenithUp < 0.25f)
+            float angleHeliUpToZenith = Vector3.Angle(_ahc.transform.up, Vector3.up);
+            //Ignore very small tilt angles to increase stability when hovering.
+            if (angleHeliUpToZenith < 0.25f)
             {
                 return Vector3.up;
             }
             Vector3 liftDirection = _ahc.transform.up;
             if (_ahc.ModulateLiftDirection)
             {
-                liftDirection = ModulateLiftDirection(angleHeliUpZenithUp);
+                liftDirection = ModulateLiftDirection(angleHeliUpToZenith);
             }
 
             Vector3 direction = AHC_Utils.ClampOrientation(Vector3.up, liftDirection, 0, MAX_LIFT_ANGLE);
@@ -223,8 +225,8 @@ namespace alelavoie
 
         private Vector3 RotorDrag()
         {
-            Vector3 veloDragDirection = -_ahc.HeliRigidbody.velocity.normalized;
-            float angleDragHeliUp = Vector3.Angle(veloDragDirection, _ahc.transform.up);
+            Vector3 dragDirection = -_ahc.HeliRigidbody.velocity.normalized;
+            float angleDragHeliUp = Vector3.Angle(dragDirection, _ahc.transform.up);
             float rotorDragStrength = ComputRotorDragStrength(angleDragHeliUp, _ahc.HeliRigidbody.velocity.magnitude);
             Vector3 rotorDragDirection = ComputeRotorDragDirection(angleDragHeliUp);
             return rotorDragDirection * rotorDragStrength;
@@ -247,22 +249,26 @@ namespace alelavoie
         private Vector3 ComputeRotorDragDirection(float angleDragHeliUp)
         {
 
-            Vector3 veloDragDirection = -_ahc.HeliRigidbody.velocity.normalized;
+            Vector3 dragDirection = -_ahc.HeliRigidbody.velocity.normalized;
 
             //To avoid killing the momentum when turning or climbing, the direction of the rotor drag needs to be almost perpendicular to the velocity.
             //To achieve that, the drag vector is rotated towards the projection of the helicopter's up vector on the plan orthogonal to the drag's direction.
             //It is rotated to form an angle of ROTOR_DRAG_MAX_DEVIATION_ANGLE with that projected vector. 
+            Vector3 expectedDragDirection;;
             Vector3 heliYaxisOnPlaneOrthoToDrag;
             if (angleDragHeliUp > 90)
             {
-                heliYaxisOnPlaneOrthoToDrag = Vector3.ProjectOnPlane(-_ahc.transform.up, veloDragDirection).normalized;
+                expectedDragDirection = -_ahc.transform.up;
+                heliYaxisOnPlaneOrthoToDrag = Vector3.ProjectOnPlane(-_ahc.transform.up, dragDirection).normalized;
             }
             else
             {
-                heliYaxisOnPlaneOrthoToDrag = Vector3.ProjectOnPlane(_ahc.transform.up, veloDragDirection).normalized;
+                expectedDragDirection = _ahc.transform.up;
+                heliYaxisOnPlaneOrthoToDrag = Vector3.ProjectOnPlane(_ahc.transform.up, dragDirection).normalized;
             }
 
-            return AHC_Utils.ClampOrientation(heliYaxisOnPlaneOrthoToDrag, veloDragDirection, 0, ROTOR_DRAG_MAX_DEVIATION_ANGLE);
+            // return expectedDragDirection;
+            return AHC_Utils.ClampOrientation(heliYaxisOnPlaneOrthoToDrag, expectedDragDirection, 0, ROTOR_DRAG_MAX_DEVIATION_ANGLE);
         }
        
     }
