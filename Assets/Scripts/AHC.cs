@@ -138,7 +138,6 @@ namespace alelavoie
         {            
             _engine.ProcessState();
             Vector3 hVelocity = new Vector3(HeliRigidbody.velocity.x, 0, HeliRigidbody.velocity.z); 
-            Debug.Log(Mathf.Round(hVelocity.magnitude * 3.6f).ToString()); 
         }
 
         void LateUpdate()
@@ -212,7 +211,7 @@ namespace alelavoie
         {
             if (_useAnim)
             {
-                RotorAnim["Fly"].speed = _engine.EngineSpeed;
+                RotorAnim[RotorAnim.clip.name].speed = _engine.EngineSpeed;
             }
         }
         private void SyncAudioSourcePitch() {
