@@ -147,7 +147,6 @@ namespace alelavoie
         {   
             // To create a smooth movement when applying Yaw torque, the strength of the Yaw torque linearly increases from 0 to the maximum pitch strength
             // over TIME_TO_FULL_INPUT.
-            Debug.Log(Mathf.InverseLerp(0f, TIME_TO_FULL_INPUT, timeInputPressed));
             float modulatedTorque = Mathf.InverseLerp(0f, TIME_TO_FULL_INPUT, timeInputPressed) * maxTorqueStrength;
             _ahc.HeliRigidbody.AddTorque(direction * modulatedTorque * _ahc.HeliRigidbody.inertiaTensor.magnitude, ForceMode.VelocityChange);
         }

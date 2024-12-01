@@ -36,14 +36,15 @@ namespace alelavoie
             
             if (_engineOn && _engineReadiness < 1f)
             {
-                _engineReadiness += 0.0004f;
-                _engineSpeed = Mathf.Pow(_engineReadiness, 2f);
+                _engineReadiness += 0.001f;
+                _engineSpeed = _engineReadiness;
             }
             else if (!_engineOn && _engineReadiness > 0)
             {
-                _engineReadiness -= 0.0004f;
-                _engineSpeed = Mathf.Pow(_engineReadiness, 2f);
+                _engineReadiness -= 0.001f;
+                _engineSpeed = _engineReadiness;
             }
+        
         }
 
         private void initEngine()
