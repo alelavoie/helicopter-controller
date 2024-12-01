@@ -31,35 +31,35 @@ namespace alelavoie
         
         [Range(0f, 1)]
         [Tooltip("Motor strength: how easily the helicopter will gain (or lose) altitude")]        
-        public float LiftStrength = 0.5f;
+        public float LiftStrength = 1f;
 
         [Range(0f, 1f)]
         [Tooltip("Helicopter's drag coeficient (wind resistance). Will affect top speed")]
-        public float HelicopterDragCoefficient = 0.4f;
+        public float HelicopterDragCoefficient = 0f;
 
         [Range(0f, 1f)]
         [Tooltip("Drag coefficient applied under the rotor. Will push the heli up if the wind hits under the rotor")]
-        public float RotorDragCoefficientUnder = 0.4f;
+        public float RotorDragCoefficientUnder = 0.2f;
 
         [Range(0f, 1f)]
         [Tooltip("Drag coefficient applied above the rotor. Will push the heli down if the wind hits on top of the rotor")]
-        public float RotorDragCoefficientAbove = 0.4f;
+        public float RotorDragCoefficientAbove = 0.6f;
 
         [Range(0f, 60f)]
         [Tooltip("Angle at which the maximum lift strength starts decreasing. When idling, the helicopter won't lose altitude if the tilt " +
             "angle is smaller than the specified value.")]
-        public float MaxLiftConservationAngle = 20f;
+        public float MaxLiftConservationAngle = 25f;
 
         [Range(0f, 1)]
         [Tooltip("Torque strength applied when tilting forward or backward.")]
-        public float PitchSensitivity = 0.4f;
+        public float PitchSensitivity = 0.3f;
 
         [Range(0f, 1)]
         [Tooltip("Torque strength applied when tilting sideways.")]
-        public float RollSensitivity = 0.4f;
+        public float RollSensitivity = 0.3f;
         [Range(0f, 1)]
         [Tooltip("Torque strength applied when rotating.")]
-        public float YawSensitivity = 0.4f;
+        public float YawSensitivity = 0.3f;
 
         [Tooltip("Check if you want the engine to be running on instantiation.")]
         public bool EngineRunning = true;
